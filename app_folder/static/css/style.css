@@ -1,0 +1,146 @@
+* {
+    margin:0px;
+    border:0px;
+    padding:0px;
+    box-sizing: border-box;
+}
+body {
+    background-image: linear-gradient(lightblue,lightyellow,lightblue);
+}
+#wrapper1 {
+    margin:20px auto;
+    width:1500px;
+    min-height:700px;
+    background-color: ivory;
+    border:brown  5px ridge;
+    padding:30px 50px 30px 50px;
+}
+#wrapper2 {
+    display:flex;
+}
+.column {
+    display:inline-block;
+    width:50%;
+    padding: 20px 100px;
+    text-align:center;
+}
+h1 {
+    margin:0px 0px 30px 0px;
+}
+h1 a {
+    /* color:inherit; */
+}
+form div {
+    width:49%;
+    display:inline-block;
+}
+label {
+    vertical-align: top;
+    width:40%;
+    font-size:x-large;
+    text-align: left;
+}
+input, textarea {
+    width:59%;
+    padding:10px;
+    margin-bottom:20px;
+    text-align: left;
+    border:brown  2px solid;
+}
+input[type="submit"] {
+    padding:5px 10px;
+    text-align: center;
+    width:fit-content;
+    font-size:x-large;
+    box-shadow: 5px 5px 5px darkgrey;
+}
+input:focus, textarea:focus {
+    background-color: rgb(239, 253, 239);
+}
+h4 {
+    color:green;
+}
+.messages li {
+    color:red;
+    text-align: left;
+}
+#errors {
+    display:flex;
+    justify-content: center;
+}
+#header {
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding:20px;
+    border-bottom: brown  5px ridge;
+}
+#logout {
+    float:right;
+    font-size: x-large;
+}
+#wrapper3 {
+    display:flex;
+}
+.text_align_left {
+    text-align:left;
+}
+h3 {
+    text-align: left;
+    padding-bottom: 20px;
+}
+.spacer-div {
+    height:20px;
+    width:100%;
+}
+.underline {
+    text-decoration: underline;
+}
+#delete_book {
+    font-size:x-large;
+    color:white;
+    background-color: crimson;
+    padding:10px;
+    margin-left:20px;
+    border:brown  2px solid;
+    box-shadow: 5px 5px 5px darkgrey;
+}
+#book_information1 {
+    font-size:large;
+    text-align: left;
+    width:40%;
+    display:inline-block;
+}
+#book_information2 {
+    font-size:large;
+    text-align: left;
+    width:59%;
+    display:inline-block;
+}
+#page_3_links {
+    display:flex;
+    justify-content: space-between;
+}
+.purple {
+    color:purple;
+}
+.all_books p {
+    padding-left:10px;
+    margin:0px;
+}
+.all_books p a {
+    display:inline-block;
+    padding-bottom:9px;
+}
+ul {
+    margin-left:20px;
+}
+.vertical_align_top {
+    vertical-align: top;
+}
+.larger_text {
+    font-size: xx-large;
+}
+#errors_div {
+    padding:20px 0px 0px 100px;
+}

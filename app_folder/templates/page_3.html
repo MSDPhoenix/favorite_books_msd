@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorite Books</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/script.js' %}"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="wrapper1">
+        <div id="header">
+            <h1 class="purple">Welcome, <a href="/display_user_info">{{user.first_name}}!</a> </h1>
+            <a id="logout"href="/logout">log out</a>
+        </div>
+        <div id="wrapper2">
+            <div class="column" class="vertical_align_top">
+                <h3 class="purple"><u><i>{{book.title}}</i></u></h3>
+                <div id="book_information1" class="vertical_align_top">
+                    <p><b>Added by: </b></p>
+                    <p><b>Added on: </b></p>
+                    <p><b>Last updated on: </b></p>
+                    <p><b>Description: </b></p>
+                </div>
+                <div id="book_information2">
+                    <p>{{book.added_by.first_name}} {{book.added_by.last_name}}</p>
+                    <p>{{book.created_at|date:"M j, Y g:i A"}}</p>
+                    <p>{{book.updated_at|date:"M j, Y g:i A"}}</p>
+                    <p>{{book.description}}</p>
+                </div>
+                <div id="page_3_links">
+                    <a href="/success">Go back</a>
+                    {% if book.added_by == user%}
+                        <a href="/edit_book_information/{{book.id}}">Edit Book Information</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="column text_align_left" >
+                <h3 class="purple">Users Who Like This Book</h3>
+                <ul>
+                    {% for user in book.favorited_by.all %}
+                    <li>
+                        {{user.first_name}} {{user.last_name}}
+                    </li>
+                    {% endfor %}                
+                </ul>
+                <div class="text_align_left">
+                    {% if book in user.favorite_books.all %}
+                    <a href="/remove_book_from_favorites/{{book.id}}/3">Un-favorite</a>
+                    {% else %}
+                    <a href="/add_book_to_favorites/{{book.id}}/3">Add book to favorites</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div> {% comment %} END OF wrapper2 {% endcomment %}
+    </div>
+</body>
+</html>
