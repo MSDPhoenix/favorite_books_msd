@@ -199,7 +199,7 @@ def update_user_information(request):
             user = User.objects.get(id=user_id)
             user.first_name = request.POST['first_name']
             user.last_name = request.POST['last_name']
-            user.birthday = datetime.strptime(request.POST['birthday'],'%Y-%m-%d')
+            user.birthday = request.POST['birthday']
             user.email = request.POST['email']
             user.save()
             return redirect('/display_user_info')
