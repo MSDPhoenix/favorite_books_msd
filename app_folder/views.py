@@ -180,8 +180,8 @@ def edit_user_information(request):
             'user' : user,
             'first_name' : user.first_name,
             'last_name' : user.last_name,
-            'birthday' : user.birthday,
-            'email' : user.birthday,           
+            'birthday' : str(user.birthday),
+            'email' : user.email,        
         }
         return render(request,'page_6.html',context)
     else:
@@ -199,6 +199,7 @@ def update_user_information(request):
             user = User.objects.get(id=user_id)
             user.first_name = request.POST['first_name']
             user.last_name = request.POST['last_name']
+            user.birthday = datetime.strptime(request.POST['birthday'],'%Y-%m-%d')
             user.email = request.POST['email']
             user.save()
             return redirect('/display_user_info')
