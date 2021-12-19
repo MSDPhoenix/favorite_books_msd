@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Favorite Books</title>
+    <title>Favorite Quotes</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="{% static 'js/script.js' %}"></script>
@@ -18,48 +18,65 @@
 <body>
     <div id="wrapper1">
         <div id="header">
-            <h1 class="purple">Welcome, <a href="/display_user_info">{{user.first_name}}!</a> </h1>
-            <a id="logout"href="/logout">log out</a>
+            <h4 class="purple">Welcome, {{user.first_name}}!</h4>
+            <span>
+                <a id="edit_my_account"href="/edit_user_information">Edit My Account</a>
+                <a id="logout"href="/logout">log out</a>
+            </span>
         </div>
         <div id="errors_div">
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li {% if message.tags %} class="{{ messages.tags }}" {% endif %}> {{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li {% if message.tags %} class="{{ messages.tags }}" {% endif %}> {{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
-        <div id="wrapper2">
-            <div class="column">
-                <form action="/add_favorite_book" method="post">
-                    {% csrf_token %}
-                <h3 class="purple">Add a Favorite Book</h3>
-                <label for="title" >Title</label>
-                <input type="text" name="title">
-                <div class="spacer-div"></div>
-                <label for="description">Description</label>
-                    <textarea name="description" placeholder="Write description here" rows="8"></textarea>
-                    <div class="spacer-div"></div>
-                    <div class="submit">
-                        <input type="submit" value="Add">
+        <div class="column2">
+            <h3 class="purple quotes">Quotes</h3>
+            {% for quote in quotes %}
+                <div class="shift_right">
+                    <p>{{quote.author}}: "{{quote.quote}}"<p>
+                    <p>Posted by <a href="/all_quotes_by_user/{{quote.added_by.id}}">{{quote.added_by.first_name}} {{quote.added_by.last_name}}</a></p>
+                    <div class="likes_div">
+                        {% if quote.liked_by.count == 1 %}
+                            <span>{{quote.liked_by.count}} Person likes this</span>
+                        {% else %}
+                            <span>{{quote.liked_by.count}} People like this</span>
+                        {% endif %}
+                        {% if user in quote.liked_by.all %}
+                            <a href="/like_quote/{{quote.id}}/2">unlike</a>
+                        {% else %}
+                            <a href="/like_quote/{{quote.id}}/2">like</a>
+                        {% endif %}
                     </div>
-                </form>
-            </div>
-            <div class="column text_align_left all_books" >
-                <h3 class="purple">All Books</h3>
-                {% for book in books %}
-                    <a class="underline purple" href="view_book_information/{{book.id}}">{{book.title}}</a>
-                    <p><i> (added by {{book.added_by.first_name}} {{book.added_by.last_name}})</i></p>
-                    <p>{{book.description}}</p>
-                    {% if book in user.favorite_books.all %}
-                        <p><a href="/remove_book_from_favorites/{{book.id}}/2">Un-favorite</a></p>
-                    {% else %}
-                        <p><a href="/add_book_to_favorites/{{book.id}}/2">Add book to favorites</a></p>  
+                    {% if quote.added_by == user %}
+                    <a href="/delete_quote/{{quote.id}}/2">Delete</a>
                     {% endif %}
-                {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="spacer-div2"></div>
+
+        <div class="column2">
+            <form action="/add_favorite_quote" method="post">
+            {% csrf_token %}
+            <h3 class="purple add_quotes">Add a Quote</h3>
+            <label for="quote">Quote</label>
+            <textarea name="quote" placeholder="Write quote here" rows="8"></textarea>
+            <div class="spacer-div"></div>
+            <label for="author" >Author</label>
+            <input type="text" name="author">
+            <div class="spacer-div"></div>
+            <div class="submit_div1">
+                <input type="submit" value="Add">
             </div>
-        </div> {% comment %} END OF wrapper2 {% endcomment %}
+        </form>
+        <div class="spacer-div"></div>
+        <div class="spacer-div"></div>
+        </div>
     </div>
 </body>
 </html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Favorite Books</title>
+    <title>Favorite Quotes</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="{% static 'js/script.js' %}"></script>
@@ -17,50 +17,66 @@
 </head>
 <body>
     <div id="wrapper1">
-        <div id="header">
-            <h1 class="purple">Welcome, <a href="/display_user_info">{{user.first_name}}!</a> </h1>
-            <a id="logout"href="/logout">log out</a>
+        <div id="header"> 
+            <h4 class="nothing_to_see_here"></h4>
+            <span>
+                <a href="/success">Back</a>
+                <a id="logout"href="/logout">Logout</a>
+            </span>
         </div>
-        <div id="wrapper2">
-            <div class="column" class="vertical_align_top">
-                <h3 class="purple"><u><i>{{book.title}}</i></u></h3>
-                <div id="book_information1" class="vertical_align_top">
-                    <p><b>Added by: </b></p>
-                    <p><b>Added on: </b></p>
-                    <p><b>Last updated on: </b></p>
-                    <p><b>Description: </b></p>
-                </div>
-                <div id="book_information2">
-                    <p>{{book.added_by.first_name}} {{book.added_by.last_name}}</p>
-                    <p>{{book.created_at|date:"M j, Y g:i A"}}</p>
-                    <p>{{book.updated_at|date:"M j, Y g:i A"}}</p>
-                    <p>{{book.description}}</p>
-                </div>
-                <div id="page_3_links">
-                    <a href="/success">Go back</a>
-                    {% if book.added_by == user%}
-                        <a href="/edit_book_information/{{book.id}}">Edit Book Information</a>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="column text_align_left" >
-                <h3 class="purple">Users Who Like This Book</h3>
-                <ul>
-                    {% for user in book.favorited_by.all %}
-                    <li>
-                        {{user.first_name}} {{user.last_name}}
-                    </li>
-                    {% endfor %}                
+        <!-- <div id="errors_div">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li {% if message.tags %} class="{{ messages.tags }}" {% endif %}> {{ message }}</li>
+                    {% endfor %}
                 </ul>
-                <div class="text_align_left">
-                    {% if book in user.favorite_books.all %}
-                    <a href="/remove_book_from_favorites/{{book.id}}/3">Un-favorite</a>
-                    {% else %}
-                    <a href="/add_book_to_favorites/{{book.id}}/3">Add book to favorites</a>
-                    {% endif %}
+            {% endif %}
+        </div> -->
+            <h4 class="purple quotes2">{{other_user.first_name}} {{other_user.last_name}}'s Quotes</h4>
+        <div class="column2">
+            {% for quote in quotes %}
+                <div class="shift_right">
+                    <p>{{quote.author}}: "{{quote.quote}}"<p>
+                    <!-- <p>Posted by <a href="/all_quotes_by_user/{{quote.added_by.id}}">{{quote.added_by.first_name}} {{quote.added_by.last_name}}</a></p> -->
+                    <!-- <div class="likes_div">
+                        {% if quote.liked_by.count == 1 %}
+                            <span>{{quote.liked_by.count}} Person likes this</span>
+                        {% else %}
+                            <span>{{quote.liked_by.count}} People like this</span>
+                        {% endif %}
+                        {% if user in quote.liked_by.all %}
+                            <a href="/like_quote/{{quote.id}}/2">unlike</a>
+                        {% else %}
+                            <a href="/like_quote/{{quote.id}}/2">like</a>
+                        {% endif %}
+                    </div>
+                    {% if quote.added_by == user %}
+                    <a href="/delete_quote/{{quote.id}}/2">Delete</a>
+                    {% endif %} -->
                 </div>
+            {% endfor %}
+        </div>
+
+        <!-- <div class="spacer-div2"></div>
+
+        <div class="column2">
+            <form action="/add_favorite_quote" method="post">
+            {% csrf_token %}
+            <h3 class="purple add_quotes">Add a Quote</h3>
+            <label for="quote">Quote</label>
+            <textarea name="quote" placeholder="Write quote here" rows="8"></textarea>
+            <div class="spacer-div"></div>
+            <label for="author" >Author</label>
+            <input type="text" name="author">
+            <div class="spacer-div"></div>
+            <div class="submit_div1">
+                <input type="submit" value="Add">
             </div>
-        </div> {% comment %} END OF wrapper2 {% endcomment %}
+        </form>
+        <div class="spacer-div"></div>
+        <div class="spacer-div"></div>
+        </div> -->
     </div>
 </body>
 </html>

@@ -13,7 +13,7 @@ def success(request):
     if user_id:
         context = {
             'user' : User.objects.get(id=user_id),
-            'books' : Book.objects.all(),
+            'quotes' : FavoriteQuote.objects.all().order_by("-id"),
         }
         return render(request,"page_2.html",context)
     else:
@@ -24,8 +24,15 @@ def register(request):
     if len(errors) > 0:
         for key, value in errors.items():
             messages.error(request,value)
+        # request.session['first_name'] = request.POST['first_name']
+        # request.session['last_name'] = request.POST['last_name']
+        # request.session['birthday'] = request.POST['birthday']
+        # request.session['email'] = request.POST['email']
+        # request.session['password'] = request.POST['password']
+        # request.session['confirm_password'] = request.POST['confirm_password']
         return redirect('/')
     else:
+        request.session.flush()
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
         birthday = request.POST['birthday']
@@ -41,8 +48,11 @@ def login(request):
     if len(errors) > 0:
         for key,value in errors.items():
             messages.error(request,value)
+        request.session['email'] = request.POST['email']
+        request.session['password'] = request.POST['password']
         return redirect('/')
     else:
+        request.session.flush()
         email = request.POST['email']
         password = request.POST['password']
         user = User.objects.filter(email=email)[0]
@@ -53,120 +63,84 @@ def logout(request):
     request.session.flush()
     return redirect('/')
 
-def add_favorite_book(request):
+def add_favorite_quote(request):
     user_id = request.session.get('user_id')
     if user_id:
-        errors = User.objects.bookValidator(request.POST)
+        errors = User.objects.quoteValidator(request.POST)
         if len(errors) > 0:
             for key,value in errors.items():
                 messages.error(request,value)
-            return redirect('/success')
+            # return redirect('/success')
         else:        
             user = User.objects.get(id=user_id)
-            title = request.POST['title']
-            description = request.POST['description']
-            book = Book.objects.create(title=title,description=description,added_by=user)
-            book.save()
-            book.favorited_by.add(user)
-            return redirect('/view_book_information/'+str(book.id))
+            quote = request.POST['quote']
+            author = request.POST['author']
+            favorite_quote = FavoriteQuote.objects.create(quote=quote,author=author,added_by=user)
+            favorite_quote.save()
+            favorite_quote.liked_by.add(user)
+        return redirect('/success')
     else:
         return redirect('/')
 
-def view_book_information(request,book_id):
+def all_quotes_by_user(request,quote_added_by_id):
     user_id = request.session.get('user_id')
     if user_id:
-        book = Book.objects.get(id=book_id)
         user = User.objects.get(id=user_id)
+        other_user = User.objects.get(id=quote_added_by_id)
         context = {
             'user' : user,
-            'book' : book,
+            'other_user' : other_user,
+            'quotes' : other_user.quotes.all().order_by("-id"),
         }
         return render(request,'page_3.html',context)
     else:
         return redirect('/')
 
-def edit_book_information(request,book_id):
+def like_quote(request,quote_id,page_number):
     user_id = request.session.get('user_id')
     if user_id:
         user = User.objects.get(id=user_id)
-        book = Book.objects.get(id=book_id)
-        context = {
-            'user' : user,
-            'book' : book,
-        }
-        return render(request,'page_4.html',context)
-    else:
-        return redirect('/')
-
-def update_book_information(request,book_id):
-    user_id = request.session.get('user_id')
-    if user_id:
-        errors = User.objects.bookValidator(request.POST)
-        if len(errors) > 0:
-            for key,value in errors.items():
-                messages.error(request,value)
-            return redirect('/edit_book_information/'+str(book_id))
-        else:        
-            book = Book.objects.get(id=book_id)
-            book.title = request.POST['title']
-            book.description = request.POST['description']
-            book.save()
-            return redirect('/view_book_information/'+str(book_id))
-    else:
-        return redirect('/')
-
-def delete_book_information(request,book_id):
-    user_id = request.session.get('user_id')
-    if user_id:
-        Book.objects.get(id=book_id).delete()
-        return redirect('/success')
-    else:
-        return redirect('/')
-        
-def remove_book_from_favorites(request,book_id,page_number):
-    user_id = request.session.get('user_id')
-    if user_id:
-        book = Book.objects.get(id=book_id)
-        user = User.objects.get(id=user_id)
-        book.favorited_by.remove(user)
-        book.save()
+        quote = FavoriteQuote.objects.get(id=quote_id)
+        if quote in user.liked_quotes.all():
+            user.liked_quotes.remove(quote)
+        else:
+            user.liked_quotes.add(quote)
+        user.save()
         if page_number == 2:
             return redirect('/success')
         elif page_number == 3:
-            return redirect('/view_book_information/'+str(book_id))
-        elif page_number == 4:
-            return redirect('/edit_book_information/'+str(book_id))
+            return redirect('/all_quotes_by_user/'+str(quote.added_by.id))
+        elif page_number == 5:
+            return redirect('/display_user_information')
         elif page_number == 6:
             return redirect('/edit_user_information')
-        else:
-            return redirect('/')
     else:
         return redirect('/')
 
-def add_book_to_favorites(request,book_id,page_number):
+def delete_quote(request,quote_id,page_number):
     user_id = request.session.get('user_id')
     if user_id:
-        book = Book.objects.get(id=book_id)
-        user = User.objects.get(id=user_id)
-        book.favorited_by.add(user)
-        book.save()
+        quote = FavoriteQuote.objects.get(id=quote_id)
+        other_user_id = quote.added_by.id
+        quote.delete()
         if page_number == 2:
             return redirect('/success')
         elif page_number == 3:
-            return redirect('/view_book_information/'+str(book_id))
-        elif page_number == 4:
-            return redirect('/edit_book_information/'+str(book_id))
-        else:
-            return redirect('/')
+            return redirect('/all_quotes_by_user/'+str(other_user_id))
+        elif page_number == 5:
+            return redirect('/display_user_information')
+        elif page_number == 6:
+            return redirect('/edit_user_information')
     else:
         return redirect('/')
 
-def display_user_info(request):
+def display_user_information(request):
     user_id = request.session.get('user_id')
     if user_id:
         user = User.objects.get(id=user_id)
         context = {
             'user' : user,
+            'quotes' : user.quotes.all().order_by("-id"),
         }
         return render(request,'page_5.html',context)
     else:
@@ -182,6 +156,7 @@ def edit_user_information(request):
             'last_name' : user.last_name,
             'birthday' : str(user.birthday),
             'email' : user.email,        
+            'quotes' : user.quotes.all().order_by("-id"),
         }
         return render(request,'page_6.html',context)
     else:
@@ -199,10 +174,8 @@ def update_user_information(request):
             user = User.objects.get(id=user_id)
             user.first_name = request.POST['first_name']
             user.last_name = request.POST['last_name']
-            user.birthday = request.POST['birthday']
             user.email = request.POST['email']
             user.save()
-            return redirect('/display_user_info')
+            return redirect('/success')
     else:
         return redirect('/')
-
